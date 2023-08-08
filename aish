@@ -2,10 +2,20 @@
 
 if [ "$1" = "" -o "$1" = "-h" ]
 then
-  echo "Usage: aish QUERY"
-  echo "QUERY = tell the AI what you want"
-  echo "e.g. 'aish a for loop going from 5 to 15'."
+  echo "Usage: . aish QUERY"
+  echo
+  echo "QUERY:   tell the AI what you want"
+  echo "Example: '. aish a for loop going from 5 to 15'."
+  echo "Note:    You must include the . to source the script."
+  echo "         The result will be available from history with the up key."
   exit 0
+fi
+
+(return 0 2>/dev/null) && sourced=1 || sourced=0
+if [ $sourced -eq 0 ]; then
+  echo "Error: you must call aish sourced with the . like this:"
+  echo ". aish ${@}"
+  exit 1
 fi
 
 request=`echo "${@}" | sed -r 's/"/\\\"/g'`
@@ -31,7 +41,7 @@ then
   shopt -s histappend
   history -s "${result}"
   history -w
-  echo "Press the up arrow 2x to access the solution."
+  echo "Press the up arrow to get the solution from history."
 else
   echo "${json}"
 fi
