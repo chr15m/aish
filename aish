@@ -1,5 +1,13 @@
 #!/bin/bash
 
+if [ "$1" = "" -o "$1" = "-h" ]
+then
+  echo "Usage: aish QUERY"
+  echo "QUERY = tell the AI what you want"
+  echo "e.g. 'aish a for loop going from 5 to 15'."
+  exit 0
+fi
+
 request=`echo "${@}" | sed -r 's/"/\\\"/g'`
 
 data='{
