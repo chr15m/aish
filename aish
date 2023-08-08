@@ -1,0 +1,29 @@
+#!/bin/bash
+
+request=`echo "${@}" | sed -r 's/"/\\\"/g'`
+
+data='{
+  "model": "gpt-4",
+  "messages": [
+    {"role": "user", "content": "Please write a one-liner in bash shell for performing the following task. Assume you have access to all of the commonly available unix commands on a modern Linux system. You can separate multi-line commands with a semicolon or double ampersand but please put them on one line. Please only return the exact bash one-liner command without any superfluous words explaining it. Here is the task I would like you to carry out with the one-liner: '$request'"}
+  ]
+}'
+
+echo -ne "...fetching solution..."
+json=$( curl -s https://api.openai.com/v1/chat/completions -u ":${OPENAI_API_KEY}" -H 'Content-Type: application/json' -d "${data}" )
+echo -ne "\033[2K" ; printf "\r"
+
+if `echo "${json}" | grep -q '"content": '`
+then
+  result=`echo "${json}" | grep '"content": "' | sed -nr 's/"content": "(.*)"/\1/p' | sed -e 's/^[ \t]*//' | sed -e 's/\\\"/"/g'`
+  echo "Hit Enter to add this command to history or ctrl-C to abort:"
+  echo -n "$ ${result}"
+  read -r _
+  set -o history
+  shopt -s histappend
+  history -s "${result}"
+  history -w
+  echo "Press the up arrow 2x to access the solution."
+else
+  echo "${json}"
+fi
