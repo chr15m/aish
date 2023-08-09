@@ -10,9 +10,8 @@
 # Donate:  <ko-fi.com/chr15m>
 
 # TODO:
-# - read override vars from ~/.aish if set
+# - record a new screencast
 # - give the AI a way to flag a prompt error or issue
-# - allow user to set model
 
 if [ "$1" = "" -o "$1" = "-h" ]
 then
@@ -77,19 +76,22 @@ then
   fi
 fi
 
-(return 0 2>/dev/null) && sourced=1 || sourced=0
-if [ $sourced -eq 0 ]; then
-  _throw_source_error "${@}"
-fi
+AISH_SHELL="${SHELLNAME}"
+AISH_OS="${OS}"
+
+# source aish config file with overrides if it exists
+[[ -f ~/.aish ]] && source ~/.aish
 
 request=`echo "${@}" | sed -r 's/"/\\\"/g'`
 
 data='{
-  "model": "gpt-4",
+  "model": "'${AISH_MODEL:-gpt-4}'",
   "messages": [
-    {"role": "user", "content": "Please write a one-liner for '${SHELLNAME}' shell for performing the following task. Assume you have access to all of the commonly available unix commands on a modern '${OS}' system. You can separate multi-line commands with a semicolon or double ampersand but please put them on one line. Please only return the exact bash one-liner command without any superfluous words explaining it. Here is the task I would like you to carry out with the one-liner: '$request'"}
+    {"role": "user", "content": "Please write a one-liner for '${AISH_SHELL}' shell for performing the following task. Assume you have access to all of the commonly available unix commands on a modern '${AISH_OS}' system. You can separate multi-line commands with a semicolon or double ampersand but please put them on one line. Please only return the exact bash one-liner command without any superfluous words explaining it. Here is the task I would like you to carry out with the one-liner: '$request'"}
   ]
 }'
+
+# echo "Sending: ${data}"
 
 echo -ne "...fetching solution..."
 json=$( curl -s https://api.openai.com/v1/chat/completions -u ":${OPENAI_API_KEY}" -H 'Content-Type: application/json' -d "${data}" )
