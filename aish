@@ -1,6 +1,7 @@
-# aish: AI shell completions <https://github.com/chr15m/aish>
-# vi: ft=bash
+# aish: AI shell completions
+# <https://github.com/chr15m/aish>
 
+# vi: ft=bash
 # Why no hash-bang?
 # It's so this script can be sourced under both bash and zsh.
 
@@ -9,8 +10,9 @@
 # Donate:  <ko-fi.com/chr15m>
 
 # TODO:
-# - set OS and shell in prompt from local
 # - read override vars from ~/.aish if set
+# - give the AI a way to flag a prompt error or issue
+# - allow user to set model
 
 if [ "$1" = "" -o "$1" = "-h" ]
 then
@@ -23,28 +25,61 @@ then
   exit 0
 fi
 
+OS=`uname`
+OS=${OS/Darwin/Mac OSX}
+
 # test if user has sourced the script and notify them if not
 
 _throw_source_error () {
-    echo "Error: you must call aish sourced with a . like this:"
-    echo ". aish ${@}"
-    exit 1  
+  echo "Please source aish in a bash or zsh shell like this:"
+  echo ". aish ${@}"
+  # echo ${1}
+  exit 1
 }
 
-if [ "${SHELL}" = "/bin/bash" ]
+case $BASH_VERSION in *.*)
+  SHELLNAME="bash"
+  ;;
+esac
+case $ZSH_VERSION  in *.*)
+  SHELLNAME="zsh"
+  ;;
+esac
+case "$VERSION" in *zsh*)
+  SHELLNAME="zsh"
+  ;;
+esac
+
+#echo "SHELLNAME: ${SHELLNAME}"
+#echo "OS: ${OS}"
+
+if [ "${SHELLNAME}" != "zsh" ] && [ "$SHELLNAME" != "bash" ]
+then
+  _throw_source_error "${@}"
+fi
+
+if [ "${SHELLNAME}" = "bash" ]
 then
   (return 0 2>/dev/null) && sourced=1 || sourced=0
   if [ $sourced -eq 0 ]; then
-    _throw_source_error
+    _throw_source_error "${@}"
   fi
 fi
 
-if [ "${SHELL}" = "/bin/zsh" ]
+if [ "${SHELLNAME}" = "zsh" ]
 then
   if [[ "${ZSH_EVAL_CONTEXT}" = "toplevel" ]]
   then
-    _throw_source_error
+    _throw_source_error "${@}"
   fi
+  if ! (( zsh_eval_context[(I)file] )); then
+    _throw_source_error "${@}"
+  fi
+fi
+
+(return 0 2>/dev/null) && sourced=1 || sourced=0
+if [ $sourced -eq 0 ]; then
+  _throw_source_error "${@}"
 fi
 
 request=`echo "${@}" | sed -r 's/"/\\\"/g'`
@@ -52,7 +87,7 @@ request=`echo "${@}" | sed -r 's/"/\\\"/g'`
 data='{
   "model": "gpt-4",
   "messages": [
-    {"role": "user", "content": "Please write a one-liner in bash shell for performing the following task. Assume you have access to all of the commonly available unix commands on a modern Linux system. You can separate multi-line commands with a semicolon or double ampersand but please put them on one line. Please only return the exact bash one-liner command without any superfluous words explaining it. Here is the task I would like you to carry out with the one-liner: '$request'"}
+    {"role": "user", "content": "Please write a one-liner for '${SHELLNAME}' shell for performing the following task. Assume you have access to all of the commonly available unix commands on a modern '${OS}' system. You can separate multi-line commands with a semicolon or double ampersand but please put them on one line. Please only return the exact bash one-liner command without any superfluous words explaining it. Here is the task I would like you to carry out with the one-liner: '$request'"}
   ]
 }'
 
@@ -66,10 +101,12 @@ then
   echo "Hit Enter to add this command to history or ctrl-C to abort:"
   echo -n "$ ${result}"
   read -r _
-  if [ "${SHELL}" = "/bin/zsh" ]
+  if [ "${SHELLNAME}" = "zsh" ]
   then
     print -s "${result}"
-  else
+  fi
+  if [ "${SHELLNAME}" = "bash" ]
+  then
     set -o history
     shopt -s histappend
     history -s "${result}"
