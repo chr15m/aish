@@ -10,8 +10,8 @@
 # Donate:  <ko-fi.com/chr15m>
 
 # TODO:
-# - record a new screencast
 # - give the AI a way to flag a prompt error or issue
+# - set up basic tests via github actions
 
 if [ "$1" = "" -o "$1" = "-h" ]
 then

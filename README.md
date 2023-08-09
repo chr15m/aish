@@ -1,6 +1,8 @@
 Instant shell script solutions from AI right in your prompt.
 
-![SVG screencast of aish in action](./screencast.svg)
+<p dir="auto" align="center" width="100%">
+  <img src="https://raw.githubusercontent.com/chr15m/aish/main/screencast.svg" alt="SVG screencast of aish in action" style="max-width: 100%;">
+</p>
 
 `aish` is a single file shell script for getting one-liner solutions from AI right into your terminal where you need them.
 It asks OpenAI for a one-liner solution to your problem, shows it to you, and inserts it into your history if you confirm.
