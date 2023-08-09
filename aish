@@ -76,6 +76,9 @@ then
   fi
 fi
 
+# exit from ctrl-C without exiting user's shell
+trap "return 0" SIGINT
+
 AISH_SHELL="${SHELLNAME}"
 AISH_OS="${OS}"
 
