@@ -8,6 +8,10 @@
 # Donate:  <https://www.patreon.com/chr15m>
 # Donate:  <ko-fi.com/chr15m>
 
+# TODO:
+# - set OS and shell in prompt from local
+# - read override vars from ~/.aish if set
+
 if [ "$1" = "" -o "$1" = "-h" ]
 then
   echo "Usage: . aish QUERY"
