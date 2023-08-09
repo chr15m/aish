@@ -24,7 +24,11 @@ Prefix these queries with `aish` in your terminal to try them out:
 - numeric for loop boilerplate going from 5 to 15
 - restart openssh
 - start a simple webserver using python3
-- rename every file in ~/images from .jpg to .png
+- rename every file in ./images from .jpg to .png
+- resize all of images in ./images to a maximum of 100 pixels in any dimension
+- create a small webserver with netcat
+- get the ips that amazon.com resolves to and ping each one
+- list all network interfaces and their ip addresses
 - print out the source of function __git_ps1
 - delete all unused docker images
 - concatenate two .mkv video files
