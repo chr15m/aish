@@ -85,6 +85,20 @@ AISH_OS="${OS}"
 # source aish config file with overrides if it exists
 [[ -f ~/.aish ]] && source ~/.aish
 
+# check if API key is set
+if [ -z "$OPENAI_API_KEY" ]
+then
+  echo "Error: OPENAI_API_KEY not set."
+  echo
+  echo "Get your key from <https://platform.openai.com/account/api-keys>."
+  echo "Put it in ~/.aish like this:"
+  echo "OPENAI_API_KEY=sk-..."
+  echo
+  return 1
+fi
+
+# start the actual request to OpenAI
+
 request=`echo "${@}" | sed -r 's/"/\\\"/g'`
 
 data='{
