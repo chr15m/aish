@@ -6,7 +6,9 @@ Instant shell script solutions from AI right in your prompt.
 It asks OpenAI for a one-liner solution to your problem, shows it to you, and inserts it into your history if you confirm.
 Once it's in your history you can press "up" and then run or edit the one-liner as you like.
 
-By default `aish` 
+By default `aish` with detect your current shell and OS and ask the AI for solutions for that combination but this can be configured.
+
+WARNING: Always carefully check the output from the AI for bugs or other issues. Do not run the output unless you completely understand what it is doing. You are fully responsible for any commands you run. **This software comes with ABSOLUTELY NO WARRANTY, to the extent permitted by applicable law.** Please see [LICENSE.txt](./LICENSE.txt) for more details.
 
 ## Install
 
