@@ -1,4 +1,12 @@
-#!/bin/bash
+# aish: AI shell completions <https://github.com/chr15m/aish>
+# vi: ft=bash
+
+# Why no hash-bang?
+# It's so this script can be sourced under both bash and zsh.
+
+# Website: <https://mccormick.cx>
+# Donate:  <https://www.patreon.com/chr15m>
+# Donate:  <ko-fi.com/chr15m>
 
 if [ "$1" = "" -o "$1" = "-h" ]
 then
@@ -11,11 +19,28 @@ then
   exit 0
 fi
 
-(return 0 2>/dev/null) && sourced=1 || sourced=0
-if [ $sourced -eq 0 ]; then
-  echo "Error: you must call aish sourced with the . like this:"
-  echo ". aish ${@}"
-  exit 1
+# test if user has sourced the script and notify them if not
+
+_throw_source_error () {
+    echo "Error: you must call aish sourced with a . like this:"
+    echo ". aish ${@}"
+    exit 1  
+}
+
+if [ "${SHELL}" = "/bin/bash" ]
+then
+  (return 0 2>/dev/null) && sourced=1 || sourced=0
+  if [ $sourced -eq 0 ]; then
+    _throw_source_error
+  fi
+fi
+
+if [ "${SHELL}" = "/bin/zsh" ]
+then
+  if [[ "${ZSH_EVAL_CONTEXT}" = "toplevel" ]]
+  then
+    _throw_source_error
+  fi
 fi
 
 request=`echo "${@}" | sed -r 's/"/\\\"/g'`
@@ -37,11 +62,16 @@ then
   echo "Hit Enter to add this command to history or ctrl-C to abort:"
   echo -n "$ ${result}"
   read -r _
-  set -o history
-  shopt -s histappend
-  history -s "${result}"
-  history -w
-  echo "Press the up arrow to get the solution from history."
+  if [ "${SHELL}" = "/bin/zsh" ]
+  then
+    print -s "${result}"
+  else
+    set -o history
+    shopt -s histappend
+    history -s "${result}"
+    history -w
+  fi
+  echo "Press the up arrow to access the solution."
 else
   echo "${json}"
 fi
