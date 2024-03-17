@@ -1,0 +1,8 @@
+Test plan for Bash and Zsh:
+
+aish            # should show help
+aish models     # should list the available openai models
+. aish test     # should print a message from the llm
+. aish list dir # should insert `ls` into the terminal history
+
+Try out the tests in README.md
