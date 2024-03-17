@@ -20,10 +20,14 @@ Then you can simply run `aish` to get started:
 . aish show me which process is running on port 8000
 ```
 
+### Configuration
+
 Make sure you set the environment variable `OPENAI_API_KEY` to [your OpenAI API key](https://platform.openai.com/account/api-keys).
 You can add the key to `~/.aish` if it's not in your environment already. See the [configure](#configure) section below for details.
 
 By default aish will use `gpt-3.5-turbo` but `gpt-4` is highly recommended. You can add `AISH_MODEL=gpt-4` to `~/.aish` to configure this.
+
+Set `AISH_URL` if you want to use a different OpenAI API compatible server (for example for a local model).
 
 By default `aish` will detect your current shell and OS and ask the AI for solutions for that combination but this can be configured.
 
