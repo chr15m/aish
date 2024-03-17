@@ -23,6 +23,8 @@ Then you can simply run `aish` to get started:
 Make sure you set the environment variable `OPENAI_API_KEY` to [your OpenAI API key](https://platform.openai.com/account/api-keys).
 You can add the key to `~/.aish` if it's not in your environment already. See the [configure](#configure) section below for details.
 
+By default aish will use `gpt-3.5-turbo` but `gpt-4` is highly recommended. You can add `AISH_MODEL=gpt-4` to `~/.aish` to configure this.
+
 By default `aish` will detect your current shell and OS and ask the AI for solutions for that combination but this can be configured.
 
 **WARNING**: Always carefully check the output from the AI for bugs or other issues. Do not run the output unless you completely understand what it is doing. You are fully responsible for any commands you run. **This software comes with ABSOLUTELY NO WARRANTY, to the extent permitted by applicable law.** Please see [LICENSE.txt](./LICENSE.txt) for more details.
