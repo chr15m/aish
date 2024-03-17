@@ -10,7 +10,6 @@
 # Donate:  <ko-fi.com/chr15m>
 
 # TODO:
-# - give the AI a way to flag a prompt error or issue
 # - set up basic tests via github actions
 
 if [ "$1" = "" -o "$1" = "-h" ]
@@ -104,7 +103,7 @@ request=`echo "${@}" | sed -r 's/"/\\\"/g'`
 data='{
   "model": "'${AISH_MODEL:-gpt-4}'",
   "messages": [
-    {"role": "user", "content": "Please write a one-liner for '${AISH_SHELL}' shell for performing the following task. Assume you have access to all of the commonly available unix commands on a modern '${AISH_OS}' system. You can separate multi-line commands with a semicolon or double ampersand but please put them on one line. Please only return the exact bash one-liner command without any superfluous words explaining it. Here is the task I would like you to carry out with the one-liner: '$request'"}
+  {"role": "system", "content": "You are an AI shell-scripting expert called Aish."},{"role": "user", "content": "Please write a one-liner for '${AISH_SHELL}' shell for performing the following task. Assume you have access to all of the commonly available unix commands on a modern '${AISH_OS}' system. You can separate multi-line commands with a semicolon or double ampersand but please put them on one line. Please only return the exact bash one-liner command without any superfluous words explaining it. IMPORTANT: If you need to ask for clarification or provide any information other than a one-liner solution, please prefix your response with the exact phrase AISH_FEEDBACK: in all caps, with a colon. If you are responding with anything other than a shell script one-liner you MUST include AISH_FEEDBACK: (including the colon) as the start of the response.\n\n Here is the task I would like you to carry out with the one-liner: '$request'"}
   ]
 }'
 
@@ -117,21 +116,26 @@ echo -ne "\033[2K" ; printf "\r"
 if `echo "${json}" | grep -q '"content": '`
 then
   result=`echo "${json}" | grep '"content": "' | sed -nr 's/"content": "(.*)"/\1/p' | sed -e 's/^[ \t]*//' | sed -e 's/\\\"/"/g'`
-  echo "Hit Enter to add this command to history or ctrl-C to abort:"
-  echo -n "$ ${result}"
-  read -r _
-  if [ "${SHELLNAME}" = "zsh" ]
+  if [ "${result#AISH_FEEDBACK: }" != "$result" ]
   then
-    print -s "${result}"
+    echo "${result#AISH_FEEDBACK: }"
+  else
+    echo "Hit Enter to add this command to history or ctrl-C to abort:"
+    echo -n "$ ${result}"
+    read -r _
+    if [ "${SHELLNAME}" = "zsh" ]
+    then
+      print -s "${result}"
+    fi
+    if [ "${SHELLNAME}" = "bash" ]
+    then
+      set -o history
+      shopt -s histappend
+      history -s "${result}"
+      history -w
+    fi
+    echo "Press the up arrow to access the solution."
   fi
-  if [ "${SHELLNAME}" = "bash" ]
-  then
-    set -o history
-    shopt -s histappend
-    history -s "${result}"
-    history -w
-  fi
-  echo "Press the up arrow to access the solution."
 else
   echo "${json}"
 fi
