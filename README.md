@@ -20,14 +20,10 @@ Then you can simply run `aish` to get started:
 . aish show me which process is running on port 8000
 ```
 
-### Configuration
+**Note:** Make sure you set the environment variable `OPENAI_API_KEY` to [your OpenAI API key](https://platform.openai.com/account/api-keys).
+You can add the key to `~/.aish` if it's not in your environment already.
 
-Make sure you set the environment variable `OPENAI_API_KEY` to [your OpenAI API key](https://platform.openai.com/account/api-keys).
-You can add the key to `~/.aish` if it's not in your environment already. See the [configure](#configure) section below for details.
-
-By default aish will use `gpt-3.5-turbo` but `gpt-4` is highly recommended. You can add `AISH_MODEL=gpt-4` to `~/.aish` to configure this.
-
-Set `AISH_URL` if you want to use a different OpenAI API compatible server (for example for a local model).
+See the [configure](#configure) section below for details on configuring model (**defaults to `gpt-3.5-turbo-0301`**), server URL, etc.
 
 By default `aish` will detect your current shell and OS and ask the AI for solutions for that combination but this can be configured.
 
@@ -62,12 +58,14 @@ Here are some examples of configuration variables you can set:
 ```bash
 # Set or override the OpenAI API key
 OPENAI_API_KEY=...your key...
+# Override the ChatGPT model to use
+AISH_MODEL="gpt-3.5-turbo-0301" # the default model but `gpt-4` is recommended.
 # Override the shell the AI will create solutions for
 # (default is to autodetect whatever shell you are in)
 AISH_SHELL="zsh"
 # Override the OS the AI will create solutions for
 # (default is to autodetect the OS you are using)
 AISH_OS="Mac OSX"
-# Override the ChatGPT model to use
-AISH_MODEL="gpt-3.5-turbo-0301"
+# Use a different OpenAI API compatible server (e.g. locally hosted)
+AISH_URL=https://localhost:8000/
 ```
