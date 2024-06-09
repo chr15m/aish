@@ -28,6 +28,7 @@ then
   echo ''
   echo '- Create a new API key here: <https://platform.openai.com/api-keys>'
   echo '- List the available models with `aish models`'
+  echo '- Requests will be logged to ~/.aish-log'
   exit 0
 fi
 
@@ -138,6 +139,8 @@ echo -ne "\033[2K" ; printf "\r"
 
 if `echo "${json}" | grep -q '"content": '`
 then
+  now=`date "+%Y-%m-%dT%H:%M:%S%:z"`
+  echo "$now ${request}" >> ~/.aish-log
   result=`echo "${json}" | grep '"content": "' | sed -nr 's/"content": "(.*)"/\1/p' | sed -e 's/^[ \t]*//' | sed -e 's/\\\"/"/g'`
   if [ "${result#AISH_FEEDBACK: }" != "$result" ]
   then
