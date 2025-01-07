@@ -141,7 +141,7 @@ if `echo "${json}" | grep -q '"content": '`
 then
   now=`date "+%Y-%m-%dT%H:%M:%S%:z"`
   echo "$now ${request}" >> ~/.aish-log
-  result=`echo "${json}" | grep '"content": "' | sed -nr 's/"content": "(.*)"/\1/p' | sed -e 's/^[ \t]*//' | sed -e 's/\\\"/"/g'`
+  result=`echo "${json}" | grep '"content": "' | sed -nr 's/"content": "(.*)"\,/\1/p' | sed -e 's/^[ \t]*//' | sed -e 's/\\\"/"/g'`
   if [ "${result#AISH_FEEDBACK: }" != "$result" ]
   then
     echo "${result#AISH_FEEDBACK: }"
